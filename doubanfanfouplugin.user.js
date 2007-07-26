@@ -1,4 +1,4 @@
-﻿// Douban-Fanfou integration plugin
+// Douban-Fanfou integration plugin
 // Version 0.1 BETA!
 // Copyright (c) 2007, Li Fanxi 
 // Released under the GPL license
@@ -19,8 +19,8 @@
 // ==UserScript==
 // @name Douban-Fanfou plugin
 // @namespace http://www.freemindworld.com/db_ff/
-// @description An plugin for the integration of Douban and Fanfou
-// @include http://*.douban.com/subject/*
+// @description An plugin for the integration of Douban and Fanfou. 注意：目前本插件还在不断改进中，请随时关注http://www.freemindworld.com/db_ff/index.htm上的更新！与作者联系请通过邮件或GTalk:lifanxi@gmail.com
+// @include http://www.douban.com/subject/*
 // ==/UserScript==
 
 var allLinks, thisLink;
@@ -58,14 +58,23 @@ function postFanfou(event)
 	var msg = notes + ": " + title;
 	if (url != "")
 	{
-		msg += "(" + url + ")";
+		msg += " (" + url + ")";
 	}
 	if (rate != "")
 	{
 		msg += "，我的评价是: " + rate;
 	}
-//	alert(msg);
-	GM_xmlhttpRequest({
+
+	var additional = prompt("预览：\n" + msg + "\n\n你还可以添加一些附注：","");
+	if (additional == null)
+	{
+		alert("放弃分享。");
+		return;
+	}
+	if (additional != "")
+		msg += "，" + additional;
+	//	alert(msg);	
+		GM_xmlhttpRequest({
 		method: 'POST',
 		url: 'http://api.fanfou.com/statuses/update.xml', 
 		headers: {'Content-type': 'application/x-www-form-urlencoded'}, 
@@ -81,7 +90,7 @@ function postFanfou(event)
 	              'responseText:\n' + responseDetails.responseText);
 		}
 	    }
-	});
+		});
 }
 
 
