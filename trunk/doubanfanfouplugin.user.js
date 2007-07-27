@@ -30,8 +30,51 @@
 // @namespace http://www.freemindworld.com/db_ff/
 // @description An plugin for the integration of Douban and Fanfou. 注意：目前本插件还在不断改进中，请随时关注http://www.freemindworld.com/db_ff/index.htm上的更新！与作者联系请通过邮件或GTalk:lifanxi@gmail.com
 // @include http://www.douban.com/subject/*
+// @include http://www.douban.com/people/*/miniblogs*
 // ==/UserScript==
 
+if (document.location.href.indexOf("miniblogs") != -1)
+{
+    DoMiniblog();
+}
+else
+{
+    DoSubject();
+}
+function DoMiniblog()
+{
+    var allDiv;
+    allDiv = document.getElementsByTagName("div");
+    for (var i = 0; i < allDiv.length; i++)
+    {
+        if (allDiv[i].className == "sbjtd")
+        {
+            allDiv[i].innerHTML += "&nbsp;&nbsp;";
+            var btn = document.createElement("input");
+            btn.class = "butt";
+            btn.type = "button";
+            btn.value = "告诉饭否";
+            btn.name = "tellfanfou";
+            btn.addEventListener("click", postMiniblogFF, false);
+            allDiv[i].appendChild(btn);
+            break;
+        }
+    }
+}
+
+function postMiniblogFF(event)
+{
+
+    var data = event.target.form.elements[0].value;
+    if (data != "")
+    {
+        SendRequest("通过豆瓣语录说：" + data);
+    }
+    event.target.form.submit();
+}
+
+function DoSubject()
+{
 var allLinks, thisLink;
 allLinks = document.getElementsByTagName('a');
 for (var i = 0; i < allLinks.length; i++)
@@ -50,7 +93,7 @@ for (var i = 0; i < allLinks.length; i++)
     }   
 }
 
-
+}
 function postFanfou(event)
 {
     var title=getTitle();
@@ -84,6 +127,12 @@ function postFanfou(event)
     if (additional != "")
         msg += "，" + additional;
     //    alert(msg);   
+    SendRequest(msg);
+}
+function SendRequest(msg)
+{
+    //    alert(msg);
+    //return;
         GM_xmlhttpRequest({
         method: 'POST',
         url: 'http://api.fanfou.com/statuses/update.xml',
