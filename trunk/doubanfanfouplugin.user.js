@@ -1,5 +1,5 @@
 // Doufan (Douban-Fanfou integration plugin)
-// Version 0.2 beta
+// Version 0.3 beta
 // Copyright (C) 2007, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
