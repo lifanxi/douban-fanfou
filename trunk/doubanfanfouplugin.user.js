@@ -91,7 +91,7 @@ function postFanfou(event)
         data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
         onload: function(responseDetails) {
         if (responseDetails.status == 200)
-            alert("分享成功！\n------------------\n感谢您试用“豆饭”，目前“豆饭”还在不断完善中，请随时访问\nhttp://www.freemindworld.com/db_ff/index.html获取最新版本！");
+            alert("分享成功！\n------------------\n感谢您试用\"豆饭\"，目前\"豆饭\"还在不断完善中，请随时访问\nhttp://www.freemindworld.com/db_ff/index.html获取最新版本！");
         else
         {
                 alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
@@ -122,25 +122,21 @@ function getTitle()
 function getMessage()
 {
     var status;
-    status = document.getElementById("istatus");
-    if (status)
-    {
-        return status.textContent;
-    }
-    else
-    {
-        status = document.getElementById("interest_sect");
-        if (status)
-        {
-            if (status.firstChild.className=="m")
-            {
-                alert("您尚未收藏这个资源，请将它加入收藏后再分享到饭否。");
-                return "";
-            }
-        }
-        alert("无法获取资源状态！");       
-        return "";
-    }
+	status = document.getElementById("interest_section");
+	if (status)
+	{
+		if (status.parentNode.firstChild.tagName=="H2")
+		{
+			return status.parentNode.firstChild.textContent;
+		}
+		else
+		{
+			alert ("无法获取资源状态！请检查有无新版豆饭可解决此问题！");       
+			return "";
+		}
+	}
+	alert("您尚未收藏这个资源，请将它加入收藏后再分享到饭否。");
+	return "";
 }
 
 function getMyRate()
