@@ -1,5 +1,5 @@
 // Doufan (Douban-Fanfou integration plugin)
-// Version 0.3 beta
+// Version 0.4 beta
 // Copyright (C) 2007, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 // To uninstall, go to Tools/Manage User Scripts,
 // select "Douban-Fanfou plugin", and click Uninstall.
 //
-// $Id$
+// $Id: doubanfanfouplugin.user.js 9 2007-07-28 11:42:05Z lifanxi $
 //
 // ==UserScript==
 // @name Douban-Fanfou plugin
 // @namespace http://www.freemindworld.com/db_ff/
-// @description An plugin for the integration of Douban and Fanfou. 注意：目前本插件还在不断改进中，请随时关注http://www.freemindworld.com/db_ff/index.htm上的更新！与作者联系请通过邮件或GTalk:lifanxi@gmail.com
+// @description An plugin for the integration of Douban and Fanfou. 
 // @include http://www.douban.com/subject/*
 // @include http://www.douban.com/people/*/miniblogs*
 // @include http://www.douban.com/people/*/contact_miniblogs*
@@ -295,7 +295,6 @@ function ChkEnv()
 		alert("您的Greaskmonkey插件不能支持豆饭，请升级该插件或使用豆饭XPI版本。");
 		return false;
 	}
-	
 	// Check for update
 	if (GM_setValue && GM_getValue)
 	{
@@ -303,7 +302,7 @@ function ChkEnv()
 		var dateDiff = Date.now()/1000 - lastCheck;
 		// Check every 24 hours
 		if ((dateDiff > 60*60*24) || (dateDiff < 0))
-		{
+		{	
 			DoUpdate();
 		}
 	}
@@ -312,7 +311,7 @@ function ChkEnv()
 
 function DoUpdate()
 {
-	var currentRevision = 5;
+	var currentRevision = 4;
 	GM_xmlhttpRequest(
 		{
 		method: 'GET',
