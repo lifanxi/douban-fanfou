@@ -24,6 +24,7 @@
 // To uninstall, go to Tools/Manage User Scripts,
 // select "Douban-Fanfou plugin", and click Uninstall.
 //
+// $Id$
 //
 // ==UserScript==
 // @name Douban-Fanfou plugin
@@ -31,83 +32,128 @@
 // @description An plugin for the integration of Douban and Fanfou. 注意：目前本插件还在不断改进中，请随时关注http://www.freemindworld.com/db_ff/index.htm上的更新！与作者联系请通过邮件或GTalk:lifanxi@gmail.com
 // @include http://www.douban.com/subject/*
 // @include http://www.douban.com/people/*/miniblogs*
+// @include http://www.douban.com/people/*/contact_miniblogs*
 // ==/UserScript==
 
-if (document.location.href.indexOf("miniblogs") != -1)
+// Check if the environment is OK
+if (ChkEnv())
 {
-    DoMiniblog();
+    // We want to know on which page we are staying and do different things.
+	var pageUrl = document.location.href;
+	if (pageUrl.indexOf("contact_miniblogs") != -1)
+	{
+		// Friends' Miniblog
+		DoContactMiniblog();
+	}
+	else if (pageUrl.indexOf("miniblogs") != -1)
+	{
+		// My Miniblog
+		DoMiniblog();
+	}
+	else
+	{
+		// Resource pages (Books, Movies, Musics)
+		DoSubject();
+	}
 }
-else
-{
-    DoSubject();
-}
+
+// My Miniblog
 function DoMiniblog()
 {
-    var allDiv;
-    allDiv = document.getElementsByTagName("div");
-    for (var i = 0; i < allDiv.length; i++)
+    var allDivs;
+    allDivs = document.getElementsByTagName("div");
+    for (var i = 0; i < allDivs.length; i++)
     {
-        if (allDiv[i].className == "sbjtd")
+        if (allDivs[i].className == "sbjtd")
         {
-            allDiv[i].innerHTML += "&nbsp;&nbsp;";
-            var btn = document.createElement("input");
-            btn.class = "butt";
-            btn.type = "button";
-            btn.value = "告诉饭否";
-            btn.name = "tellfanfou";
-            btn.addEventListener("click", postMiniblogFF, false);
-            allDiv[i].appendChild(btn);
+            allDivs[i].innerHTML += "&nbsp;&nbsp;";
+			allDivs[i].appendChild(MakeTellFanfouBtn());
             break;
         }
     }
 }
 
-function postMiniblogFF(event)
+// Friends' Miniblog()
+function DoContactMiniblog()
 {
+	var allForms;
+	allForms = document.getElementsByTagName("form");
+	for (var i = 0; i < allForms.length; ++i)
+	{
+		if (allForms[i].name == "mbform")
+		{
+			if (allForms[i].childNodes[1].tagName == "DIV")
+			{
+				allForms[i].childNodes[1].innerHTML += "&nbsp;&nbsp;";
+				allForms[i].childNodes[1].appendChild(MakeTellFanfouBtn());
+			}
+		}
+	}
+}
 
+// Make the "tell fanfou" button
+function MakeTellFanfouBtn()
+{
+	var btn = document.createElement("input");
+	btn.class = "butt";
+	btn.type = "button";
+	btn.value = "告诉饭否";
+	btn.name = "tellfanfou";
+	btn.addEventListener("click", PostMiniblogFF, false);
+	return btn;
+}
+
+function PostMiniblogFF(event)
+{
     var data = event.target.form.elements[0].value;
     if (data != "")
     {
-        SendRequest("通过豆瓣语录说：" + data);
+		var msg = "通过豆瓣语录说：" + data;
+		if (msg.length > 140)
+		{
+			alert("告诉饭否的语录不能超过132个字。");
+			return;
+		}
+        SendRequest(msg);
     }
     event.target.form.submit();
 }
 
 function DoSubject()
 {
-var allLinks, thisLink;
-allLinks = document.getElementsByTagName('a');
-for (var i = 0; i < allLinks.length; i++)
-{
-    thisLink = allLinks[i];
-    if (thisLink.href.indexOf("doulists") != -1)
-      {
-        var p = thisLink.parentNode;
-        p.innerHTML += " &nbsp; &nbsp; &nbsp; ";
-        var btn = document.createElement("a");
-        btn.href = "#";
-        btn.innerHTML="分享到饭否";
-        btn.addEventListener("click", postFanfou,false);
-        p.appendChild(btn);   
-        break;   
-    }   
+	var allLinks, thisLink;
+	allLinks = document.getElementsByTagName('a');
+	for (var i = 0; i < allLinks.length; i++)
+	{
+		thisLink = allLinks[i];
+		if (thisLink.href.indexOf("doulists") != -1)
+		{
+			var p = thisLink.parentNode;
+			p.innerHTML += " &nbsp; &nbsp; &nbsp; ";
+			var btn = document.createElement("a");
+			btn.href = "#";
+			btn.innerHTML="分享到饭否";
+			btn.addEventListener("click", PostFanfou,false);
+			p.appendChild(btn);   
+			break;   
+		}   
+	}
 }
 
-}
-function postFanfou(event)
+function PostFanfou(event)
 {
-    var title=getTitle();
+    var title=GetTitle();
     if (title == "")
     {
         return false;   
     }
-    var notes=getMessage();
+    var notes=GetMessage();
     if (notes == "")
     {
         return false;
     }
-    var rate = getMyRate();
-    var url = getURL();
+    var rate = GetMyRate();
+    var url = GetURL();
     var msg = notes + ": " + title;
     if (url != "")
     {
@@ -118,7 +164,7 @@ function postFanfou(event)
         msg += "，我的评价是: " + rate;
     }
 
-    var additional = prompt("预览：\n" + msg + "\n\n你还可以添加一些附注：","");
+    var additional = prompt("预览：\n" + msg + "\n\n你还可以添加一些附注(不超过" + (139-msg.length) + "字)：","");
     if (additional == null)
     {
         alert("放弃分享。");
@@ -126,34 +172,33 @@ function postFanfou(event)
     }
     if (additional != "")
         msg += "，" + additional;
-    //    alert(msg);   
     SendRequest(msg);
 }
 function SendRequest(msg)
 {
-    //    alert(msg);
-    //return;
-        GM_xmlhttpRequest({
+//    alert(msg + msg.length);
+//    return;
+	GM_xmlhttpRequest({
         method: 'POST',
-        url: 'http://api.fanfou.com/statuses/update.xml',
-        headers: {'Content-type': 'application/x-www-form-urlencoded'},
-        data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
-        onload: function(responseDetails) {
-        if (responseDetails.status == 200)
-            alert("分享成功！\n------------------\n感谢您试用\"豆饭\"，目前\"豆饭\"还在不断完善中，请随时访问\nhttp://www.freemindworld.com/db_ff/index.html获取最新版本！");
-        else
-        {
-                alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
-                      ',statusText:' + responseDetails.statusText + '\n' +
-                  ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
-                  'responseText:\n' + responseDetails.responseText);
-        }
-        }
+				url: 'http://api.fanfou.com/statuses/update.xml',
+				headers: {'Content-type': 'application/x-www-form-urlencoded'},
+				data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
+				onload: function(responseDetails) {
+				if (responseDetails.status == 200)
+					alert("分享成功！");
+				else
+				{
+					alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
+						  ',statusText:' + responseDetails.statusText + '\n' +
+						  ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
+						  'responseText:\n' + responseDetails.responseText);
+				}
+			}
         });
 }
 
 
-function getTitle()
+function GetTitle()
 {
     var allH1;
     allH1 = document.getElementsByTagName("h1");
@@ -164,11 +209,12 @@ function getTitle()
     else
     {
         alert("无法获取资源名称！");       
+		DoUpdate();
         return "";
     }
 }
 
-function getMessage()
+function GetMessage()
 {
     var status;
 	status = document.getElementById("interest_section");
@@ -180,7 +226,8 @@ function getMessage()
 		}
 		else
 		{
-			alert ("无法获取资源状态！请检查有无新版豆饭可解决此问题！");       
+			alert ("无法获取资源状态！");
+			DoUpdate();
 			return "";
 		}
 	}
@@ -188,7 +235,7 @@ function getMessage()
 	return "";
 }
 
-function getMyRate()
+function GetMyRate()
 {
     var myrate;
     myrate = document.getElementById("myratebar_5");
@@ -219,7 +266,7 @@ function getMyRate()
     return "";
 }
 
-function getURL()
+function GetURL()
 {
     var allForms;
     allForms = document.getElementsByTagName("form");
@@ -239,3 +286,52 @@ function getURL()
         return "";
     }   
 }
+
+function ChkEnv()
+{
+	// Check xmlhttpRequest Support
+	if (!GM_xmlhttpRequest)
+	{
+		alert("您的Greaskmonkey插件不能支持豆饭，请升级该插件或使用豆饭XPI版本。");
+		return false;
+	}
+	
+	// Check for update
+	if (GM_setValue && GM_getValue)
+	{
+		var lastCheck = GM_getValue("DoufanLastUpdate", 0);
+		var dateDiff = Date.now()/1000 - lastCheck;
+		// Check every 24 hours
+		if ((dateDiff > 60*60*24) || (dateDiff < 0))
+		{
+			DoUpdate();
+		}
+	}
+	return true;
+}
+
+function DoUpdate()
+{
+	var currentRevision = 5;
+	GM_xmlhttpRequest(
+		{
+		method: 'GET',
+		url: 'http://www.freemindworld.com/db_ff/LatestVersion.txt',
+		onreadystatechange: function(response) 
+			    {
+					if ((response.readyState == 4) && (response.status == 200))
+					{
+						if (parseInt(response.responseText) > currentRevision)
+						{
+							if (GM_setValue)
+							{
+								GM_setValue("DoufanLastUpdate", parseInt(Date.now()/1000));
+							}
+							alert("豆饭出新版本了，确定后会自动打开豆饭网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
+							window.open("http://www.freemindworld.com/db_ff/index.htm");
+						}
+					}
+				}
+        });
+}
+
