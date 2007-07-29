@@ -129,10 +129,10 @@ function DoSubject()
 		if (thisLink.href.indexOf("doulists") != -1)
 		{
 			var p = thisLink.parentNode;
-			p.innerHTML += " &nbsp; &nbsp; &nbsp; ";
+            p.innerHTML += " &nbsp; &nbsp; &nbsp; ";
 			var btn = document.createElement("a");
 			btn.href = "#";
-			btn.innerHTML="分享到饭否";
+			btn.textContent="分享到饭否";
 			btn.addEventListener("click", PostFanfou,false);
 			p.appendChild(btn);   
 			break;   
