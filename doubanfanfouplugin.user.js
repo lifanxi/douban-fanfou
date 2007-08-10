@@ -1,4 +1,4 @@
-// Doufan (Douban-Fanfou integration plugin)
+﻿// Doufan (Douban-Fanfou integration plugin)
 // Version 0.4 beta
 // Copyright (C) 2007, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,9 @@
 // @description An plugin for the integration of Douban and Fanfou. 
 // @include http://www.douban.com/subject/*
 // @include http://www.douban.com/people/*/miniblogs*
+// @include http://www.douban.com/people/*/saying*
 // @include http://www.douban.com/people/*/contact_miniblogs*
+// @include http://www.douban.com/people/*/contact_saying*
 // ==/UserScript==
 
 // Check if the environment is OK
@@ -40,12 +42,15 @@ if (ChkEnv())
 {
     // We want to know on which page we are staying and do different things.
 	var pageUrl = document.location.href;
-	if (pageUrl.indexOf("contact_miniblogs") != -1)
+	if ((pageUrl.indexOf("contact_miniblogs") != -1) || 
+        (pageUrl.indexOf("contact_saying") != -1))
+                                                        
 	{
 		// Friends' Miniblog
 		DoContactMiniblog();
 	}
-	else if (pageUrl.indexOf("miniblogs") != -1)
+	else if ((pageUrl.indexOf("miniblogs") != -1) ||
+             (pageUrl.indexOf("saying") != -1))
 	{
 		// My Miniblog
 		DoMiniblog();
@@ -108,10 +113,10 @@ function PostMiniblogFF(event)
     var data = event.target.form.elements[0].value;
     if (data != "")
     {
-		var msg = "通过豆瓣语录说：" + data;
+		var msg = "通过豆瓣广播：" + data;
 		if (msg.length > 140)
 		{
-			alert("告诉饭否的语录不能超过132个字。");
+			alert("告诉饭否的广播不能超过133个字。");
 			return;
 		}
         SendRequest(msg);
