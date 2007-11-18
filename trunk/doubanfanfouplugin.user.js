@@ -1,5 +1,5 @@
 ﻿// Doufan (Douban-Fanfou integration plugin)
-// Version 0.4 beta
+// Version 1.0
 // Copyright (C) 2007, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,10 +31,8 @@
 // @namespace http://www.freemindworld.com/db_ff/
 // @description An plugin for the integration of Douban and Fanfou. 
 // @include http://www.douban.com/subject/*
-// @include http://www.douban.com/people/*/miniblogs*
-// @include http://www.douban.com/people/*/saying*
-// @include http://www.douban.com/people/*/contact_miniblogs*
-// @include http://www.douban.com/people/*/contact_saying*
+// @include http://www.douban.com/*/miniblogs*
+// @include http://www.douban.com/contacts/*
 // ==/UserScript==
 
 // Check if the environment is OK
@@ -42,15 +40,13 @@ if (ChkEnv())
 {
     // We want to know on which page we are staying and do different things.
 	var pageUrl = document.location.href;
-	if ((pageUrl.indexOf("contact_miniblogs") != -1) || 
-        (pageUrl.indexOf("contact_saying") != -1))
+	if (pageUrl.indexOf("contacts") != -1)
                                                         
 	{
 		// Friends' Miniblog
 		DoContactMiniblog();
 	}
-	else if ((pageUrl.indexOf("miniblogs") != -1) ||
-             (pageUrl.indexOf("saying") != -1))
+	else if (pageUrl.indexOf("miniblogs") != -1) 
 	{
 		// My Miniblog
 		DoMiniblog();
@@ -72,7 +68,7 @@ function DoMiniblog()
         if (allDivs[i].className == "sbjtd")
         {
             allDivs[i].innerHTML += "&nbsp;&nbsp;";
-			allDivs[i].appendChild(MakeTellFanfouBtn());
+	    allDivs[i].appendChild(MakeTellFanfouBtn());
             break;
         }
     }
@@ -134,7 +130,7 @@ function DoSubject()
 		if (thisLink.href.indexOf("doulists") != -1)
 		{
 			var p = thisLink.parentNode;
-            p.innerHTML += " &nbsp; &nbsp; &nbsp; ";
+            		p.innerHTML += " <br /><br /> ";
 			var btn = document.createElement("a");
 			btn.href = "#";
 			btn.textContent="分享到饭否";
@@ -169,14 +165,29 @@ function PostFanfou(event)
         msg += "，我的评价是: " + rate;
     }
 
-    var additional = prompt("预览：\n" + msg + "\n\n你还可以添加一些附注(不超过" + (139-msg.length) + "字)：","");
-    if (additional == null)
+    var note = GetNote();
+    while (true)
     {
-        alert("放弃分享。");
-        return;
+        var additional = prompt("预览：\n" + msg + "\n\n你还可以添加一些标注(不超过" + (139-msg.length) + "字)：", note);
+        if (additional == null)
+        {
+            alert("放弃分享。");
+            return;
+        }
+        if (additional != "")
+        {
+            if (additional.length > (139-msg.length))
+            {
+                alert("您输入的标注太长了，请将它减短" + (additional.length - (139-msg.length)) + "字。");
+            }
+            else
+            {
+                break;
+            }
+        }
     }
     if (additional != "")
-        msg += "，" + additional;
+        msg += "。" + additional;
     SendRequest(msg);
 }
 function SendRequest(msg)
@@ -214,7 +225,7 @@ function GetTitle()
     else
     {
         alert("无法获取资源名称！");       
-		DoUpdate();
+	DoUpdate();
         return "";
     }
 }
@@ -237,6 +248,20 @@ function GetMessage()
 		}
 	}
 	alert("您尚未收藏这个资源，请将它加入收藏后再分享到饭否。");
+	return "";
+}
+
+function GetNote()
+{
+        var status;
+	status = document.getElementById("interest_section");
+	if (status)
+	{
+		if ((status.firstChild.tagName=="P") && (status.firstChild.childNodes.length == 1))
+		{
+			return status.firstChild.textContent;
+		}
+	}
 	return "";
 }
 
@@ -316,11 +341,11 @@ function ChkEnv()
 
 function DoUpdate()
 {
-	var currentRevision = 4;
+	var currentRevision = 5;
 	GM_xmlhttpRequest(
 		{
 		method: 'GET',
-		url: 'http://www.freemindworld.com/db_ff/LatestVersion.txt',
+		url: 'http://www.freemindworld.com/db_ff/LatestVersion.asp',
 		onreadystatechange: function(response) 
 			    {
 					if ((response.readyState == 4) && (response.status == 200))
