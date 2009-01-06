@@ -1,6 +1,6 @@
 // Doufan (Douban-Fanfou integration plugin)
-// Version 1.2
-// Copyright (C) 2007-2008, Li Fanxi <lifanxi (AT) freemindworld.com>
+// Version 1.3
+// Copyright (C) 2007-2009, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -124,10 +124,11 @@ function DoContactMiniblog()
     {
         if (allForms[i].name == "mbform")
         {
-            if (allForms[i].childNodes[1].tagName == "DIV")
+            if (allForms[i].childNodes[2].tagName == "DIV")
             {
-                allForms[i].childNodes[1].innerHTML += "&nbsp;&nbsp;";
-                allForms[i].childNodes[1].appendChild(MakeTellFanfouBtn());
+                allForms[i].childNodes[2].innerHTML += "&nbsp;&nbsp;";
+                allForms[i].childNodes[2].appendChild(MakeTellFanfouBtn());
+		break;
             }
         }
     }
@@ -147,7 +148,7 @@ function MakeTellFanfouBtn()
 
 function PostMiniblogFF(event)
 {
-    var data = event.target.form.elements[0].value;
+    var data = event.target.form.elements[1].value;
     if (data != "")
     {
         var msg = "通过豆瓣广播：" + data;
@@ -156,6 +157,7 @@ function PostMiniblogFF(event)
             alert("告诉饭否的广播不能超过133个字。");
             return;
         }
+
         SendRequest(msg);
     }
     event.target.form.submit();
@@ -291,9 +293,9 @@ function GetEventMessage()
     status = document.getElementById("actchoice");
     if (status)
     {
-        if (status.childNodes[1].className=="m")
+        if (status.childNodes[0].className=="m")
         {
-            return status.childNodes[1].textContent;
+            return status.childNodes[0].textContent;
         }
         else
         {
@@ -364,7 +366,7 @@ function ChkEnv()
 
 function DoUpdate()
 {
-    var currentRevision = 7;
+    var currentRevision = 8;
     GM_xmlhttpRequest(
     {
         method: 'GET',
