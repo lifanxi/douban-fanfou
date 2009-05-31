@@ -1,5 +1,5 @@
 // Doufan (Douban-Fanfou integration plugin)
-// Version 1.3
+// Version 1.4
 // Copyright (C) 2007-2009, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -269,21 +269,21 @@ function GetTitle()
 function GetMessage()
 {
     var status;
-    status = document.getElementById("interest_section");
+    status = document.getElementById("interest_sect_level");
     if (status)
     {
-        if (status.firstChild.className=="m")
+        if (status.firstChild.firstChild.className=="mr10")
         {
-            return status.firstChild.textContent;
+            return status.firstChild.firstChild.textContent;
         }
         else
         {
-            alert ("无法获取资源状态！");
-            DoUpdate();
+            alert("您尚未收藏这个资源，请将它加入收藏后再分享到饭否。");
             return "";
         }
     }
-    alert("您尚未收藏这个资源，请将它加入收藏后再分享到饭否。");
+    alert ("无法获取资源状态！");
+    DoUpdate();
     return "";
 }
 
@@ -310,12 +310,12 @@ function GetEventMessage()
 function GetNote()
 {
     var status;
-    status = document.getElementById("interest_section");
+    status = document.getElementById("interest_sect_level");
     if (status)
     {
-        if ((status.lastChild.tagName=="P") && (status.lastChild.childNodes.length == 1))
+        if ((status.firstChild.lastChild.tagName=="SPAN") && (status.firstChild.lastChild.childNodes.length == 1))
         {
-            return status.lastChild.textContent;
+            return status.firstChild.lastChild.textContent;
         }
     }
     return "";
