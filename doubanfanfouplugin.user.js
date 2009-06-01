@@ -34,6 +34,7 @@
 // @include http://www.douban.com/*/miniblogs*
 // @include http://www.douban.com/contacts/*
 // @include http://www.douban.com/event/*/*
+// @include http://www.douban.com/online/*/*
 // ==/UserScript==
 
 // Check if the environment is OK
@@ -47,7 +48,8 @@ if (ChkEnv())
         // Miniblog
         DoContactMiniblog();
     }
-    else if (pageUrl.indexOf("/event/") != -1)
+    else if ((pageUrl.indexOf("/event/") != -1) ||
+             (pageUrl.indexOf("/online/") != -1))
     {
         // Event
         DoEvent();
@@ -293,9 +295,13 @@ function GetEventMessage()
     status = document.getElementById("actchoice");
     if (status)
     {
-        if (status.childNodes[0].className=="m")
+        var i;
+        i = 0;
+        while ((status.childNodes[i].childNodes.length == 0) && i < 2)
+            ++i;
+        if (status.childNodes[i].className=="m")
         {
-            return status.childNodes[0].textContent;
+            return status.childNodes[i].textContent;
         }
         else
         {
