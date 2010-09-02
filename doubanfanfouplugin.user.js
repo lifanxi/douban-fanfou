@@ -1,6 +1,6 @@
-// Doufan (Douban-Fanfou integration plugin)
-// Version 1.4
-// Copyright (C) 2007-2009, Li Fanxi <lifanxi (AT) freemindworld.com>
+// Doutwit (Douban-Twitter integration plugin)
+// Version 1.5
+// Copyright (C) 2007-2010, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -22,20 +22,48 @@
 // Accept the default configuration and install.
 //
 // To uninstall, go to Tools/Manage User Scripts,
-// select "Douban-Fanfou plugin", and click Uninstall.
+// select "Doutwit plugin", and click Uninstall.
 //
 // $Id: doubanfanfouplugin.user.js 9 2007-07-28 11:42:05Z lifanxi $
 //
 // ==UserScript==
-// @name Douban-Fanfou plugin
+// @name Doutwit plugin
 // @namespace http://www.freemindworld.com/db_ff/
-// @description An plugin for the integration of Douban and Fanfou. 
-// @include http://www.douban.com/subject/*
+// @description An plugin for the integration of Douban and Twitter. 
+// @include http://*.douban.com/subject/*
 // @include http://www.douban.com/*/miniblogs*
 // @include http://www.douban.com/contacts/*
 // @include http://www.douban.com/event/*/*
 // @include http://www.douban.com/online/*/*
+// @require http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
 // ==/UserScript==
+
+function NodeInsertedHandler(event) 
+{
+    if (event.target.id == 'db-div-sharing')
+    {
+	var div = event.target; 
+	if (div)
+	{
+            var i;
+	    for (i = 0; i < div.childNodes.length; ++i)
+            {
+		if (div.childNodes[i].className == 'bd')
+		    break;
+	    }
+	    var li = document.createElement("li");
+	    li.className = "rec-twit";
+	    li.style.paddingLeft = "20px";
+	    li.style.background = 'url("http://www.freemindworld.com/db_ff/twitter.png") no-repeat scroll 0 0 transparent';
+	    var btn = document.createElement("a");
+            btn.href = "#";
+            btn.innerHTML ="分享到Twitter";
+            btn.addEventListener("click", PostFanfou,false);
+            li.appendChild(btn);   
+	    div.childNodes[i].childNodes[1].appendChild(li);
+	}
+    }
+}
 
 // Check if the environment is OK
 if (ChkEnv())
@@ -57,7 +85,8 @@ if (ChkEnv())
     else
     {
         // Resource pages (Books, Movies, Musics)
-        DoSubject();
+        // Set DOM change trigger
+	document.addEventListener("DOMNodeInserted", NodeInsertedHandler, false);
     }
 }
 
@@ -71,7 +100,7 @@ function DoEvent()
         var btn = document.createElement("a");
         btn.href = "#";
         btn.className = "redbutt rr";
-        btn.innerHTML ="<span>分享到饭否</span>";
+        btn.innerHTML ="<span>分享到Twitter</span>";
         btn.addEventListener("click", PostEvent,false);
         div.appendChild(btn);   
     }
@@ -142,7 +171,7 @@ function MakeTellFanfouBtn()
 	var btn = document.createElement("input");
 	btn.class = "butt";
 	btn.type = "button";
-	btn.value = "告诉饭否";
+	btn.value = "告诉Twitter";
 	btn.name = "tellfanfou";
 	btn.addEventListener("click", PostMiniblogFF, false);
 	return btn;
@@ -156,28 +185,13 @@ function PostMiniblogFF(event)
         var msg = "通过豆瓣广播：" + data;
         if (msg.length > 140)
         {
-            alert("告诉饭否的广播不能超过133个字。");
+            alert("告诉Twitter的广播不能超过133个字。");
             return;
         }
 
         SendRequest(msg);
     }
     event.target.form.submit();
-}
-
-function DoSubject()
-{
-	var div;
-	div = document.getElementById("interest_sectl");
-	if (div)
-    {
-        var btn = document.createElement("a");
-        btn.href = "#";
-        btn.className = "redbutt rr";
-        btn.innerHTML ="<span>分享到饭否</span>";
-        btn.addEventListener("click", PostFanfou,false);
-        div.appendChild(btn);   
-    }
 }
 
 function PostFanfou(event)
@@ -235,7 +249,8 @@ function SendRequest(msg)
 {
     GM_xmlhttpRequest({
                         method: 'POST',
-                        url: 'http://api.fanfou.com/statuses/update.xml',
+//                      url: 'http://api.fanfou.com/statuses/update.xml',
+                        url: 'https://api.twitter.com/statuses/update.xml',
                         headers: {'Content-type': 'application/x-www-form-urlencoded'},
                         data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
                         onload: function(responseDetails) {
@@ -353,7 +368,7 @@ function ChkEnv()
     // Check xmlhttpRequest Support
     if (!GM_xmlhttpRequest)
     {
-        alert("您的Greaskmonkey插件不能支持豆饭，请升级该插件或使用豆饭XPI版本。");
+        alert("您的Greaskmonkey插件不能支持豆推，请升级该插件或使用豆推XPI版本。");
         return false;
     }
     // Check for update
@@ -376,7 +391,7 @@ function DoUpdate()
     GM_xmlhttpRequest(
     {
         method: 'GET',
-        url: 'http://www.freemindworld.com/db_ff/LatestVersion.asp',
+        url: 'http://www.freemindworld.com/db_ff/LatestVersionT.asp',
         onreadystatechange: function(response) 
         {
             if ((response.readyState == 4) && (response.status == 200))
@@ -387,7 +402,7 @@ function DoUpdate()
                     {
                         GM_setValue("DoufanLastUpdate", parseInt(Date.now()/1000));
                     }
-                    alert("豆饭出新版本了，确定后会自动打开豆饭网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
+                    alert("豆推出新版本了，确定后会自动打开豆推网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
                     window.open("http://www.freemindworld.com/db_ff/index.htm");
                 }
              }
