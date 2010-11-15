@@ -417,7 +417,7 @@ function DoUpdate()
     GM_xmlhttpRequest(
         {
         method: 'GET',
-                url: 'http://www.freemindworld.com/db_ff/LatestVersion.asp',
+                url: 'http://www.freemindworld.com/db_ff/LatestVersion/',
                 onreadystatechange: function(response) 
             {
                 if ((response.readyState == 4) && (response.status == 200))
