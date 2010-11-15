@@ -1,5 +1,5 @@
-// Doutwit (Douban-Twitter integration plugin)
-// Version 1.5
+// Doufan (Douban-Fanou integration plugin)
+// Version 2.0
 // Copyright (C) 2007-2010, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,23 @@
 //
 // This is a Greasemonkey user script.
 //
-// To install, you need Greasemonkey: http://greasemonkey.mozdev.org/
+// To install, you need Greasemonkey: 
+// https://addons.mozilla.org/en-US/firefox/addon/748/
 // Then restart Firefox and revisit this script.
 // Under Tools, there will be a new menu item to "Install User Script".
 // Accept the default configuration and install.
 //
 // To uninstall, go to Tools/Manage User Scripts,
-// select "Doutwit plugin", and click Uninstall.
+// select "Doufan plugin", and click Uninstall.
 //
 // $Id: doubanfanfouplugin.user.js 9 2007-07-28 11:42:05Z lifanxi $
 //
 // ==UserScript==
-// @name Doutwit plugin
+// @name Doufan plugin
 // @namespace http://www.freemindworld.com/db_ff/
-// @description An plugin for the integration of Douban and Twitter. 
+// @description An plugin for the integration of Douban and Fanfou. 
+// @include http://www.douban.com/
+// @include http://www.douban.com/?*
 // @include http://*.douban.com/subject/*
 // @include http://www.douban.com/*/miniblogs*
 // @include http://www.douban.com/contacts/*
@@ -37,6 +40,10 @@
 // @include http://www.douban.com/online/*/*
 // @require http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
 // ==/UserScript==
+
+var pluginCount = 1;
+var pluginNames = [ "饭否", "Twitter" ];
+var pluginIDs = [ 'doufan-ff-share' , 'doufan-twitter-share' ];
 
 function NodeInsertedHandler(event) 
 {
@@ -51,16 +58,22 @@ function NodeInsertedHandler(event)
                 if (div.childNodes[i].className == 'bd')
                     break;
             }
-            var li = document.createElement("li");
-            li.className = "rec-twit";
-            li.style.paddingLeft = "20px";
-            li.style.background = 'url("http://www.freemindworld.com/db_ff/twitter.png") no-repeat scroll 0 0 transparent';
-            var btn = document.createElement("a");
-            btn.href = "#";
-            btn.innerHTML ="分享到Twitter";
-            btn.addEventListener("click", PostFanfou,false);
-            li.appendChild(btn);   
-            div.childNodes[i].childNodes[1].appendChild(li);
+            var pluginURLs = [ 'http://www.fanfou.com/favicon.ico' , 'http://www.freemindworld.com/db_ff/twitter.png' ];
+
+            for (t = 0; t < pluginCount; ++t)
+            {
+                var li = document.createElement("li");
+                li.className = "rec-ff";
+                li.style.paddingLeft = "20px";
+                li.style.background = 'url(' + pluginURLs[t] + ') no-repeat scroll 0 0 transparent';
+                var btn = document.createElement("a");
+                btn.id = pluginIDs[t];
+                btn.href = "#";
+                btn.innerHTML ="分享到" + pluginNames[t];
+                btn.addEventListener("click", PostFanfou, false);
+                li.appendChild(btn);   
+                div.childNodes[i].childNodes[1].appendChild(li);
+            }
         }
     }
 }
@@ -70,23 +83,24 @@ if (ChkEnv())
 {
     // We want to know on which page we are staying and do different things.
     var pageUrl = document.location.href;
-    if ((pageUrl.indexOf("/contacts") != -1) || 
-        (pageUrl.indexOf("/miniblogs") != -1))
-    {
-        // Miniblog
-        DoContactMiniblog();
-    }
-    else if ((pageUrl.indexOf("/event/") != -1) ||
-             (pageUrl.indexOf("/online/") != -1))
+    if ((pageUrl.indexOf("/event/") != -1) ||
+        (pageUrl.indexOf("/online/") != -1))
     {
         // Event
         DoEvent();
     }
-    else
+    else if (pageUrl.indexOf("/subject/") != -1)
     {
         // Resource pages (Books, Movies, Musics)
         // Set DOM change trigger
         document.addEventListener("DOMNodeInserted", NodeInsertedHandler, false);
+    } 
+    else if ((pageUrl.indexOf("/contacts") != -1) || 
+             (pageUrl.indexOf("/miniblogs") != -1) || 
+             (document.title == "豆瓣"))
+    {
+        // Miniblog
+        DoContactMiniblog();
     }
 }
 
@@ -97,17 +111,24 @@ function DoEvent()
     div = document.getElementById("actchoice");
     if (div)
     {
-        var btn = document.createElement("a");
-        btn.href = "#";
-        btn.className = "redbutt rr";
-        btn.innerHTML ="<span>分享到Twitter</span>";
-        btn.addEventListener("click", PostEvent,false);
-        div.appendChild(btn);   
+        for (t = 0; t < pluginCount; ++t)
+        {
+            var btn = document.createElement("a");
+            btn.href = "#";
+            btn.className = "redbutt rr";
+            btn.innerHTML ="<span id=\"" + pluginIDs[t] + "\">分享到" + pluginNames[t] + "</span>";
+            btn.addEventListener("click", PostEvent, false);
+            div.appendChild(btn);
+        }   
     }
 }
 
 function PostEvent(event)
 {
+    for (type = 0; type < pluginCount; ++type)
+        if (event.target.id == pluginIDs[type])
+            break;
+
     var title;
     title = GetTitle();
     var notes;
@@ -142,7 +163,7 @@ function PostEvent(event)
     }
     if (additional != "")
         msg += "。" + additional;
-    SendRequest(msg);
+    SendRequest(msg, type);
     return true;
 }
 
@@ -155,47 +176,51 @@ function DoContactMiniblog()
     {
         if (allForms[i].name == "mbform")
         {
-            if (allForms[i].childNodes[2].tagName == "DIV")
+            if (allForms[i].childNodes[6].className == "btn") 
             {
-                allForms[i].childNodes[2].innerHTML += "&nbsp;&nbsp;";
-                allForms[i].childNodes[2].appendChild(MakeTellFanfouBtn());
+                for (type = 0; type < pluginCount; ++type)
+                {
+                    var btn = document.createElement("input");
+                    btn.className = "bn-cta";
+                    btn.style.fontSize = '12px';
+                    btn.type = "button";
+                    btn.value = "发" + pluginNames[type];
+                    btn.name = pluginIDs[type];
+                    btn.id = pluginIDs[type];
+                    btn.addEventListener("click", PostMiniblogFF, false);
+                    allForms[i].childNodes[6].appendChild(btn);
+                }
                 break;
             }
         }
     }
 }
 
-// Make the "tell fanfou" button
-function MakeTellFanfouBtn()
-{
-    var btn = document.createElement("input");
-    btn.class = "butt";
-    btn.type = "button";
-    btn.value = "告诉Twitter";
-    btn.name = "tellfanfou";
-    btn.addEventListener("click", PostMiniblogFF, false);
-    return btn;
-}
-
 function PostMiniblogFF(event)
 {
+    for (type = 0; type < pluginCount; ++type)
+        if (event.target.id == pluginIDs[type])
+            break;
     var data = event.target.form.elements[1].value;
     if (data != "")
     {
         var msg = "通过豆瓣广播：" + data;
         if (msg.length > 140)
         {
-            alert("告诉Twitter的广播不能超过133个字。");
+            alert("发" + pluginNames[type] + "的广播不能超过133个字。");
             return;
         }
 
-        SendRequest(msg);
+        SendRequest(msg, type);
     }
     event.target.form.submit();
 }
 
 function PostFanfou(event)
 {
+    for (type = 0; type < pluginCount; ++type)
+        if (event.target.id == pluginIDs[type])
+            break;
     var title=GetTitle();
     if (title == "")
     {
@@ -241,16 +266,17 @@ function PostFanfou(event)
     }
     if (additional != "")
         msg += "。" + additional;
-    SendRequest(msg);
+    SendRequest(msg, type);
     return true;
 }
 
-function SendRequest(msg)
+function SendRequest(msg, type)
 {
+    var pluginAPIs = [ 'http://api.fanfou.com/statuses/update.xml', 
+                       'https://api.twitter.com/statuses/update.xml' ];
     GM_xmlhttpRequest({
         method: 'POST',
-                //                      url: 'http://api.fanfou.com/statuses/update.xml',
-                url: 'https://api.twitter.com/statuses/update.xml',
+                url: pluginAPIs[type],
                 headers: {'Content-type': 'application/x-www-form-urlencoded'},
                 data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
                 onload: function(responseDetails) {
@@ -368,7 +394,7 @@ function ChkEnv()
     // Check xmlhttpRequest Support
     if (!GM_xmlhttpRequest)
     {
-        alert("您的Greaskmonkey插件不能支持豆推，请升级该插件或使用豆推XPI版本。");
+        alert("您的Greaskmonkey插件不能支持豆饭，请升级该插件或使用豆饭XPI版本。");
         return false;
     }
     // Check for update
@@ -387,11 +413,11 @@ function ChkEnv()
 
 function DoUpdate()
 {
-    var currentRevision = 9;
+    var currentRevision = 10;
     GM_xmlhttpRequest(
         {
         method: 'GET',
-                url: 'http://www.freemindworld.com/db_ff/LatestVersionT.asp',
+                url: 'http://www.freemindworld.com/db_ff/LatestVersion.asp',
                 onreadystatechange: function(response) 
             {
                 if ((response.readyState == 4) && (response.status == 200))
@@ -402,7 +428,7 @@ function DoUpdate()
                         {
                             GM_setValue("DoufanLastUpdate", parseInt(Date.now()/1000));
                         }
-                        alert("豆推出新版本了，确定后会自动打开豆推网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
+                        alert("豆饭出新版本了，确定后会自动打开豆饭网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
                         window.open("http://www.freemindworld.com/db_ff/index.htm");
                     }
                 }
