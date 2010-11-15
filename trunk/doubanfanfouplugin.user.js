@@ -46,21 +46,21 @@ function NodeInsertedHandler(event)
 	if (div)
 	{
             var i;
-	    for (i = 0; i < div.childNodes.length; ++i)
+            for (i = 0; i < div.childNodes.length; ++i)
             {
 		if (div.childNodes[i].className == 'bd')
 		    break;
-	    }
-	    var li = document.createElement("li");
-	    li.className = "rec-twit";
-	    li.style.paddingLeft = "20px";
-	    li.style.background = 'url("http://www.freemindworld.com/db_ff/twitter.png") no-repeat scroll 0 0 transparent';
-	    var btn = document.createElement("a");
+            }
+            var li = document.createElement("li");
+            li.className = "rec-twit";
+            li.style.paddingLeft = "20px";
+            li.style.background = 'url("http://www.freemindworld.com/db_ff/twitter.png") no-repeat scroll 0 0 transparent';
+            var btn = document.createElement("a");
             btn.href = "#";
             btn.innerHTML ="分享到Twitter";
             btn.addEventListener("click", PostFanfou,false);
             li.appendChild(btn);   
-	    div.childNodes[i].childNodes[1].appendChild(li);
+            div.childNodes[i].childNodes[1].appendChild(li);
 	}
     }
 }
@@ -168,13 +168,13 @@ function DoContactMiniblog()
 // Make the "tell fanfou" button
 function MakeTellFanfouBtn()
 {
-	var btn = document.createElement("input");
-	btn.class = "butt";
-	btn.type = "button";
-	btn.value = "告诉Twitter";
-	btn.name = "tellfanfou";
-	btn.addEventListener("click", PostMiniblogFF, false);
-	return btn;
+    var btn = document.createElement("input");
+    btn.class = "butt";
+    btn.type = "button";
+    btn.value = "告诉Twitter";
+    btn.name = "tellfanfou";
+    btn.addEventListener("click", PostMiniblogFF, false);
+    return btn;
 }
 
 function PostMiniblogFF(event)
@@ -248,23 +248,23 @@ function PostFanfou(event)
 function SendRequest(msg)
 {
     GM_xmlhttpRequest({
-                        method: 'POST',
-//                      url: 'http://api.fanfou.com/statuses/update.xml',
-                        url: 'https://api.twitter.com/statuses/update.xml',
-                        headers: {'Content-type': 'application/x-www-form-urlencoded'},
-                        data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
-                        onload: function(responseDetails) {
-                            if (responseDetails.status == 200)
-                                alert("分享成功！");
-                            else
-                            {
-                                alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
-                                    ',statusText:' + responseDetails.statusText + '\n' +
-                                    ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
-                                    'responseText:\n' + responseDetails.responseText);
-                            }
-                        }
-                      });
+        method: 'POST',
+	//                      url: 'http://api.fanfou.com/statuses/update.xml',
+        url: 'https://api.twitter.com/statuses/update.xml',
+        headers: {'Content-type': 'application/x-www-form-urlencoded'},
+        data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
+        onload: function(responseDetails) {
+            if (responseDetails.status == 200)
+                alert("分享成功！");
+            else
+            {
+                alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
+                      ',statusText:' + responseDetails.statusText + '\n' +
+                      ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
+                      'responseText:\n' + responseDetails.responseText);
+            }
+        }
+    });
 }
 
 function GetTitle()
@@ -378,7 +378,7 @@ function ChkEnv()
         var dateDiff = Date.now()/1000 - lastCheck;
         // Check every 24 hours
         if ((dateDiff > 60*60*24) || (dateDiff < 0))
-        {	
+        {    
             DoUpdate();
         }
     }
@@ -389,24 +389,24 @@ function DoUpdate()
 {
     var currentRevision = 9;
     GM_xmlhttpRequest(
-    {
-        method: 'GET',
-        url: 'http://www.freemindworld.com/db_ff/LatestVersionT.asp',
-        onreadystatechange: function(response) 
-        {
-            if ((response.readyState == 4) && (response.status == 200))
+	{
+            method: 'GET',
+            url: 'http://www.freemindworld.com/db_ff/LatestVersionT.asp',
+            onreadystatechange: function(response) 
             {
-                if (parseInt(response.responseText) > currentRevision)
-                {
-                    if (GM_setValue)
+		if ((response.readyState == 4) && (response.status == 200))
+		{
+                    if (parseInt(response.responseText) > currentRevision)
                     {
-                        GM_setValue("DoufanLastUpdate", parseInt(Date.now()/1000));
+			if (GM_setValue)
+			{
+                            GM_setValue("DoufanLastUpdate", parseInt(Date.now()/1000));
+			}
+			alert("豆推出新版本了，确定后会自动打开豆推网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
+			window.open("http://www.freemindworld.com/db_ff/index.htm");
                     }
-                    alert("豆推出新版本了，确定后会自动打开豆推网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
-                    window.open("http://www.freemindworld.com/db_ff/index.htm");
-                }
-             }
-        }
-    });
+		}
+            }
+	});
 }
 
