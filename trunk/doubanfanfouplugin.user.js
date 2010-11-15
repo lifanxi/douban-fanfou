@@ -42,14 +42,14 @@ function NodeInsertedHandler(event)
 {
     if (event.target.id == 'db-div-sharing')
     {
-	var div = event.target; 
-	if (div)
-	{
+        var div = event.target; 
+        if (div)
+        {
             var i;
             for (i = 0; i < div.childNodes.length; ++i)
             {
-		if (div.childNodes[i].className == 'bd')
-		    break;
+                if (div.childNodes[i].className == 'bd')
+                    break;
             }
             var li = document.createElement("li");
             li.className = "rec-twit";
@@ -61,7 +61,7 @@ function NodeInsertedHandler(event)
             btn.addEventListener("click", PostFanfou,false);
             li.appendChild(btn);   
             div.childNodes[i].childNodes[1].appendChild(li);
-	}
+        }
     }
 }
 
@@ -86,7 +86,7 @@ if (ChkEnv())
     {
         // Resource pages (Books, Movies, Musics)
         // Set DOM change trigger
-	document.addEventListener("DOMNodeInserted", NodeInsertedHandler, false);
+        document.addEventListener("DOMNodeInserted", NodeInsertedHandler, false);
     }
 }
 
@@ -159,7 +159,7 @@ function DoContactMiniblog()
             {
                 allForms[i].childNodes[2].innerHTML += "&nbsp;&nbsp;";
                 allForms[i].childNodes[2].appendChild(MakeTellFanfouBtn());
-		break;
+                break;
             }
         }
     }
@@ -249,22 +249,22 @@ function SendRequest(msg)
 {
     GM_xmlhttpRequest({
         method: 'POST',
-	//                      url: 'http://api.fanfou.com/statuses/update.xml',
-        url: 'https://api.twitter.com/statuses/update.xml',
-        headers: {'Content-type': 'application/x-www-form-urlencoded'},
-        data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
-        onload: function(responseDetails) {
-            if (responseDetails.status == 200)
-                alert("分享成功！");
-            else
-            {
-                alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
-                      ',statusText:' + responseDetails.statusText + '\n' +
-                      ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
-                      'responseText:\n' + responseDetails.responseText);
+                //                      url: 'http://api.fanfou.com/statuses/update.xml',
+                url: 'https://api.twitter.com/statuses/update.xml',
+                headers: {'Content-type': 'application/x-www-form-urlencoded'},
+                data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
+                onload: function(responseDetails) {
+                if (responseDetails.status == 200)
+                    alert("分享成功！");
+                else
+                {
+                    alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
+                          ',statusText:' + responseDetails.statusText + '\n' +
+                          ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
+                          'responseText:\n' + responseDetails.responseText);
+                }
             }
-        }
-    });
+        });
 }
 
 function GetTitle()
@@ -389,24 +389,24 @@ function DoUpdate()
 {
     var currentRevision = 9;
     GM_xmlhttpRequest(
-	{
-            method: 'GET',
-            url: 'http://www.freemindworld.com/db_ff/LatestVersionT.asp',
-            onreadystatechange: function(response) 
+        {
+        method: 'GET',
+                url: 'http://www.freemindworld.com/db_ff/LatestVersionT.asp',
+                onreadystatechange: function(response) 
             {
-		if ((response.readyState == 4) && (response.status == 200))
-		{
+                if ((response.readyState == 4) && (response.status == 200))
+                {
                     if (parseInt(response.responseText) > currentRevision)
                     {
-			if (GM_setValue)
-			{
+                        if (GM_setValue)
+                        {
                             GM_setValue("DoufanLastUpdate", parseInt(Date.now()/1000));
-			}
-			alert("豆推出新版本了，确定后会自动打开豆推网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
-			window.open("http://www.freemindworld.com/db_ff/index.htm");
+                        }
+                        alert("豆推出新版本了，确定后会自动打开豆推网页(http://www.freemindworld.com/db_ff/index.htm)，请升级到最新版本使用。");
+                        window.open("http://www.freemindworld.com/db_ff/index.htm");
                     }
-		}
+                }
             }
-	});
+        });
 }
 
