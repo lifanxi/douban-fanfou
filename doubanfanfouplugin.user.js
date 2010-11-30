@@ -174,47 +174,47 @@ function DoContactMiniblog()
     var textarea = null;
     if (dbtalk)
     {
-	var alldivs = dbtalk.getElementsByTagName("div");
-	for (var i = 0; i < alldivs.length; ++i)
-	{
-	    if (alldivs[i].className == 'btn')
-	    {
+        var alldivs = dbtalk.getElementsByTagName("div");
+        for (var i = 0; i < alldivs.length; ++i)
+        {
+            if (alldivs[i].className == 'btn')
+            {
                 for (type = 0; type < pluginCount; ++type)
                 {
-		    // Dirty workaround to solve the different behavior
-		    // between the direct GM script & XPI wrapper
-		    if (alldivs[i].childNodes.length > 4)
-		    {
-			var br = document.createElement("br");
-			alldivs[i].appendChild(br);
-		    }
+                    // Dirty workaround to solve the different behavior
+                    // between the direct GM script & XPI wrapper
+                    if (alldivs[i].childNodes.length > 4)
+                    {
+                        var br = document.createElement("br");
+                        alldivs[i].appendChild(br);
+                    }
 
-		    var span = document.createElement("span");
-		    span.className = 'bn-flat';
-		    
+                    var span = document.createElement("span");
+                    span.className = 'bn-flat';
+
                     var btn = document.createElement("input");
                     btn.type = "button";
                     btn.value = pluginNames[type];
                     btn.name = pluginIDs[type];
                     btn.id = pluginIDs[type];
                     btn.addEventListener("click", PostMiniblogFF, false);
-		    
-		    span.appendChild(btn);
+
+                    span.appendChild(btn);
                     alldivs[i].appendChild(span);
 
-		    for (var j = 0; j < alldivs[i].childNodes.length; ++j)
-		    {
-			if (alldivs[i].childNodes[j].className == 'bn-flat')
-			    alldivs[i].childNodes[j].childNodes[0].style.height = '22px';
-		    }
-		    break;
+                    for (var j = 0; j < alldivs[i].childNodes.length; ++j)
+                    {
+                        if (alldivs[i].childNodes[j].className == 'bn-flat')
+                            alldivs[i].childNodes[j].childNodes[0].style.height = '22px';
+                    }
+                    break;
                 }
-	    }
-	    else if (alldivs[i].className == 'item')
-	    {
-	    	alldivs[i].style.width = "85%";
-	    }
-	}
+            }
+            else if (alldivs[i].className == 'item')
+            {
+                alldivs[i].style.width = "85%";
+            }
+        }
     }
 }
 
@@ -298,21 +298,21 @@ function SendRequest(msg, type)
                        'https://api.twitter.com/statuses/update.xml' ];
     GM_xmlhttpRequest({
         method: 'POST',
-                url: pluginAPIs[type],
-                headers: {'Content-type': 'application/x-www-form-urlencoded'},
-                data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
-                onload: function(responseDetails) {
-                if (responseDetails.status == 200)
-                    alert("分享成功！");
-                else
-                {
-                    alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
-                          ',statusText:' + responseDetails.statusText + '\n' +
-                          ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
-                          'responseText:\n' + responseDetails.responseText);
-                }
+        url: pluginAPIs[type],
+        headers: {'Content-type': 'application/x-www-form-urlencoded'},
+        data: 'source=DoubanSharing&status=' + encodeURIComponent(msg),
+        onload: function(responseDetails) {
+            if (responseDetails.status == 200)
+                alert("分享成功！");
+            else
+            {
+                alert('分享失败！\n调试信息:\nreturned status:' + responseDetails.status +
+                      ',statusText:' + responseDetails.statusText + '\n' +
+                      ',responseHeaders:' + responseDetails.responseHeaders + '\n' +
+                      'responseText:\n' + responseDetails.responseText);
             }
-        });
+        }
+    });
 }
 
 function GetTitle()
@@ -382,8 +382,8 @@ function GetNote()
     if (status)
     {
         if ((status.firstChild.lastChild.tagName=="SPAN") && 
-	    (status.firstChild.lastChild.childNodes.length == 1) && 
-	    (status.firstChild.className == 'j a_stars'))
+            (status.firstChild.lastChild.childNodes.length == 1) && 
+            (status.firstChild.className == 'j a_stars'))
         {
             return status.firstChild.lastChild.textContent;
         }
@@ -436,12 +436,12 @@ function ChkEnv()
 
 function DoUpdate()
 {
-    var currentRevision = 10;
+    var currentRevision = 11;
     GM_xmlhttpRequest(
         {
-        method: 'GET',
-                url: 'http://www.freemindworld.com/db_ff/LatestVersion/',
-                onreadystatechange: function(response) 
+            method: 'GET',
+            url: 'http://www.freemindworld.com/db_ff/LatestVersion/',
+            onreadystatechange: function(response) 
             {
                 if ((response.readyState == 4) && (response.status == 200))
                 {
