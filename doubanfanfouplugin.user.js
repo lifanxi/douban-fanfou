@@ -170,29 +170,43 @@ function PostEvent(event)
 // Miniblog
 function DoContactMiniblog()
 {
-    var allForms;
-    allForms = document.getElementsByTagName("form");
-    for (var i = 0; i < allForms.length; ++i)
+    var dbtalk = document.getElementById("db-talk");
+    var textarea = null;
+    if (dbtalk)
     {
-        if (allForms[i].name == "mbform")
-        {
-            if (allForms[i].childNodes[6].className == "btn") 
-            {
+	var alldivs = dbtalk.getElementsByTagName("div");
+	for (var i = 0; i < alldivs.length; ++i)
+	{
+	    if (alldivs[i].className == 'btn')
+	    {
                 for (type = 0; type < pluginCount; ++type)
                 {
+		    var span = document.createElement("span");
+		    span.className = 'bn-flat';
+		    
                     var btn = document.createElement("input");
-                    btn.className = "bn-cta";
-                    btn.style.fontSize = '12px';
                     btn.type = "button";
-                    btn.value = "发" + pluginNames[type];
+                    btn.value = pluginNames[type];
                     btn.name = pluginIDs[type];
                     btn.id = pluginIDs[type];
                     btn.addEventListener("click", PostMiniblogFF, false);
-                    allForms[i].childNodes[6].appendChild(btn);
+		    
+		    span.appendChild(btn);
+                    alldivs[i].appendChild(span);
+
+		    for (var j = 0; j < alldivs[i].childNodes.length; ++j)
+		    {
+			if (alldivs[i].childNodes[j].className == 'bn-flat')
+			    alldivs[i].childNodes[j].childNodes[0].style.height = '22px';
+		    }
+		    break;
                 }
-                break;
-            }
-        }
+	    }
+	    else if (alldivs[i].className == 'item')
+	    {
+	    	alldivs[i].style.width = "85%";
+	    }
+	}
     }
 }
 
@@ -299,7 +313,7 @@ function GetTitle()
     allH1 = document.getElementsByTagName("h1");
     if (allH1.length >= 1)
     {
-        return allH1[0].textContent;           
+        return allH1[0].textContent.trim();           
     }
     else
     {
@@ -321,8 +335,7 @@ function GetMessage()
         }
         else
         {
-            alert("您尚未收藏这个资源，请将它加入收藏后再分享到饭否。");
-            return "";
+            return "豆瓣资源分享";
         }
     }
     alert ("无法获取资源状态！");
@@ -360,7 +373,9 @@ function GetNote()
     status = document.getElementById("interest_sect_level");
     if (status)
     {
-        if ((status.firstChild.lastChild.tagName=="SPAN") && (status.firstChild.lastChild.childNodes.length == 1))
+        if ((status.firstChild.lastChild.tagName=="SPAN") && 
+	    (status.firstChild.lastChild.childNodes.length == 1) && 
+	    (status.firstChild.className == 'j a_stars'))
         {
             return status.firstChild.lastChild.textContent;
         }
