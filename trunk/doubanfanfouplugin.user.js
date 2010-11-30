@@ -181,6 +181,14 @@ function DoContactMiniblog()
 	    {
                 for (type = 0; type < pluginCount; ++type)
                 {
+		    // Dirty workaround to solve the different behavior
+		    // between the direct GM script & XPI wrapper
+		    if (alldivs[i].childNodes.length > 4)
+		    {
+			var br = document.createElement("br");
+			alldivs[i].appendChild(br);
+		    }
+
 		    var span = document.createElement("span");
 		    span.className = 'bn-flat';
 		    
