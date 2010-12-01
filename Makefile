@@ -2,11 +2,11 @@
 
 all:
 	cp doubanfanfouplugin.user.js web/doufan_$(V1).user.js
-	(unzip doubanfanfouplugin.xpi; \
+	(unzip web/doufanplugin.xpi; \
 	cp doubanfanfouplugin.user.js content/doufanplugin.js; \
 	/bin/cp -f install.rdf.template install.rdf ; \
 	sed -i -e "s/__VERSION__/$(V2)/" install.rdf ; \
-	zip -r web/Doufan_$(V1).xpi chrome.manifest content install.rdf; \
+	zip -r web/Doufan_$(V1).xpi chrome chrome.manifest install.rdf content/* ;\
 	rm -rf chrome.manifest content install.rdf;)
 	sha1sum web/Doufan_$(V1).xpi 
 	(cp LICENSE web; \
