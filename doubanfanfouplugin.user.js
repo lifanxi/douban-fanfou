@@ -154,12 +154,11 @@ function PostEvent(event)
             if (additional.length > (139-msg.length))
             {
                 alert("您输入的标注太长了，请将它减短" + (additional.length - (139-msg.length)) + "字。");
-            }
-            else
-            {
-                break;
+				note = additional;
+				continue;
             }
         }
+		break;
     }
     if (additional != "")
         msg += "。" + additional;
@@ -181,22 +180,16 @@ function DoContactMiniblog()
             {
                 for (type = 0; type < pluginCount; ++type)
                 {
-                    // Dirty workaround to solve the different behavior
-                    // between the direct GM script & XPI wrapper
-                    if (alldivs[i].childNodes.length > 4)
-                    {
-                        var br = document.createElement("br");
-                        alldivs[i].appendChild(br);
-                    }
-
                     var span = document.createElement("span");
-                    span.className = 'bn-flat';
 
                     var btn = document.createElement("input");
-                    btn.type = "button";
+                    btn.type = "image";
+					btn.src = "http://avatar2.fanfou.com/s0/00/37/9g.jpg?1181650871";
                     btn.value = pluginNames[type];
                     btn.name = pluginIDs[type];
                     btn.id = pluginIDs[type];
+					btn.style.height = "22px"
+					btn.style.width = "22px"
                     btn.addEventListener("click", PostMiniblogFF, false);
 
                     span.appendChild(btn);
@@ -212,7 +205,7 @@ function DoContactMiniblog()
             }
             else if (alldivs[i].className == 'item')
             {
-                alldivs[i].style.width = "85%";
+                alldivs[i].style.width = "82%";
             }
         }
     }
@@ -279,12 +272,11 @@ function PostFanfou(event)
             if (additional.length > (139-msg.length))
             {
                 alert("您输入的标注太长了，请将它减短" + (additional.length - (139-msg.length)) + "字。");
-            }
-            else
-            {
-                break;
+                note = additional;
+                continue;
             }
         }
+        break;
     }
     if (additional != "")
         msg += "。" + additional;
@@ -321,7 +313,7 @@ function GetTitle()
     allH1 = document.getElementsByTagName("h1");
     if (allH1.length >= 1)
     {
-        return allH1[0].textContent.trim();           
+        return allH1[0].textContent.trim().replace(/\n/g, "").replace(/ +/g, " ");           
     }
     else
     {
