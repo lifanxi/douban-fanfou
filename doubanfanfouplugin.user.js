@@ -286,7 +286,7 @@ function PostFanfou(event)
 
 function SendRequest(msg, type)
 {
-    var pluginAPIs = [ 'http://api.fanfou.com/statuses/update.xml', 
+    var pluginAPIs = [ 'http://api2.fanfou.com/statuses/update.xml', 
                        'https://api.twitter.com/statuses/update.xml' ];
     GM_xmlhttpRequest({
         method: 'POST',
