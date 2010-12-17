@@ -1,5 +1,5 @@
 // Doufan (Douban-Fanou integration plugin)
-// Version 2.0
+// Version 2.1
 // Copyright (C) 2007-2010, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,33 +47,24 @@ var pluginIDs = [ 'doufan-ff-share' , 'doufan-twitter-share' ];
 
 function NodeInsertedHandler(event) 
 {
-    if (event.target.id == 'db-div-sharing')
+    if ((event.target.className == 'bd') && 
+        (event.target.parentNode.id=='db-div-sharing'))
     {
-        var div = event.target; 
-        if (div)
-        {
-            var i;
-            for (i = 0; i < div.childNodes.length; ++i)
-            {
-                if (div.childNodes[i].className == 'bd')
-                    break;
-            }
-            var pluginURLs = [ 'http://www.fanfou.com/favicon.ico' , 'http://www.freemindworld.com/db_ff/twitter.png' ];
+        var pluginURLs = [ 'http://www.fanfou.com/favicon.ico' , 'http://www.freemindworld.com/db_ff/twitter.png' ];
 
-            for (t = 0; t < pluginCount; ++t)
-            {
-                var li = document.createElement("li");
-                li.className = "rec-ff";
-                li.style.paddingLeft = "20px";
-                li.style.background = 'url(' + pluginURLs[t] + ') no-repeat scroll 0 0 transparent';
-                var btn = document.createElement("a");
-                btn.id = pluginIDs[t];
-                btn.href = "#";
-                btn.innerHTML ="分享到" + pluginNames[t];
-                btn.addEventListener("click", PostFanfou, false);
-                li.appendChild(btn);   
-                div.childNodes[i].childNodes[1].appendChild(li);
-            }
+        for (t = 0; t < pluginCount; ++t)
+        {
+            var li = document.createElement("li");
+            li.className = "rec-ff";
+            li.style.paddingLeft = "20px";
+            li.style.background = 'url(' + pluginURLs[t] + ') no-repeat scroll 0 0 transparent';
+            var btn = document.createElement("a");
+            btn.id = pluginIDs[t];
+            btn.href = "#";
+            btn.innerHTML ="分享到" + pluginNames[t];
+            btn.addEventListener("click", PostFanfou, false);
+            li.appendChild(btn);   
+            event.target.childNodes[1].appendChild(li);
         }
     }
 }
