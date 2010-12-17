@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="base.css" type="text/css" media="screen" />
+<title>豆饭 - 豆瓣饭否集成Firefox/Chrome插件</title>
+</head>
+<body>
+<div id="container" class="wp">
+	<div id="header">
+		<h1><img src="title.gif" alt="豆瓣-饭否集成插件" /></h1>
+	</div>
+	<div id="main">
+		<div id="content">
+			<div id="api">
+				<h2>豆饭</h2><dl>
+				<dt id="intro">简介</dt>
+					<dd>豆瓣是一个可以分享有关电影、书籍、音乐的相关信息的网站。饭否是一个微博网站。</dd>
+					<dd>豆饭就是一个用于把豆瓣与饭否功能进行整合的插件，通过使用它可以轻松的将豆瓣上的信息分享到饭否上。</dd>
+				<dt id="system">系统要求</dt>
+					<dd>豆饭可以工作在Mozilla Firefox 2.0-3.6.*中，标准版本需要在Firefox中安装Greasemonkey插件，xpi版本可以直接安装使用。</dd>
+	
+			<dt id="install">安装步骤</dt>
+<dd>目前豆饭的最新版本是：<span style="color:#0000FF">2.1</span>　　发布于2010年12月17日。</dd>
+<dd>如果希望试用开发中的尚未发布的最新的版本：参考<a href="#dev">开发人员</a>章节。</dd>
+					<dd><strong>标准版</strong>(推荐)</dd>
+					<dd>1. 安装Firefox浏览器</dd>
+<dd>&nbsp;&nbsp;豆饭是为Firefox浏览器设计的，必须安装Firefox浏览器才可以使用豆饭。</dd>
+<dd>&nbsp;&nbsp;Firefox下载地址：<a href="http://www.getfirefox.com">http://www.getfirefox.com</a></dd>
+					<dd>2. 安装Greasemonkey插件</dd>
+<dd>&nbsp;&nbsp;Greasemonkey插件用于执行用户自定义的脚本，对各种网站进行扩展，豆饭其实就是一个Greasemonkey的脚本。</dd>
+<dd>&nbsp;&nbsp;Greasemonkey插件安装地址：<a href="http://addons.mozilla.org/en-US/firefox/addon/748">http://addons.mozilla.org/en-US/firefox/addon/748</a></dd>
+<dd>3. 安装豆饭</dd>
+<dd>&nbsp;&nbsp;点击下面任意一个下载地址，即会弹出安装对话框。如果没有弹出安装对话框，而出现下载对话框，则可能是因为Greasemonkey插件没有正确安装，返回第二步安装并重新启动Firefox。</dd>
+<dd>&nbsp;&nbsp;脚本下载地址：<a href="doufan_21.user.js">本地下载</a>&nbsp; &nbsp;<a href="http://userscripts.org/scripts/source/10931.user.js">userscript.org下载</a></dd>
+			<dd><strong>xpi版本</strong>(xpi版本适用于不愿意安装Greasemonkey插件的朋友)</dd>
+			<dd>直接点击下面的“安装”链接即可以在Firefox浏览器中安装本扩展。注意，请勿在同一个Firefox中同时安装标准版本和xpi版本，以免发生冲突。</dd>
+<dd>如果安装被Firefox阻止，请设置为允许从本站点安装。</dd>
+            <dd>豆饭xpi版本：<a href="http://douban-fanfou.googlecode.com/files/Doufan_21.xpi"
+  hash="sha1:763e20e20388b1baa1ecdc0e0a11de37c03aa2e9"
+  onclick="return install(event);">安装</a></dd>
+            <dd>如果直接安装有困难，请<a href="Doufan_21.zip">点这里下载</a>后解开压缩包，把.xpi文件拖到Firefox窗口中即可安装。</dd>
+				<dt id="usage">使用方法</dt>
+					<dd>安装豆饭后，在打开豆瓣网站的资源页面时，会出现“分享到饭否”按钮，点击后会弹出输入对话框，里面显示了当前页面上的信息和可供修改附注，输入附注后点确定即可将当前页面的信息和附注分享到饭否上。如果反悔了不想分享了，可以在输入附注的对话框中点“取消”。目前这个界面还比较简陋，以后的版本中会对此进行改进。</dd>
+<dd>同时，在登录豆瓣后的首页豆瓣广播的“我说”按钮边上，会出现“饭”按钮，点击这个按钮就可以同时把消息发布在豆瓣和饭否上。而原来的“我说”按钮则保持原来的功能，只把消息发布到豆瓣上。那如果要只发布到饭否呢？那您还跑豆瓣来做什么？:D</dd>
+<dd>注意：在打开浏览器后第一次使用这个功能时，会弹出用户名与密码对话框，这时需要输入您在饭否上的注册名和密码才可以成功分享信息。在输入过一次用户名密码后，系统不会再次提示输入直到关闭浏览器。</dd>
+<dd><div style="text-align:center;"><img src="1.png" alt="豆瓣页面示例" border="1" /></div></dd>
+<dd><div style="text-align:center;">豆瓣页面示例</div></dd>
+<dd><div style="text-align:center;"><img src="2.png" alt="饭否页面示例" border="1" /></div></dd>
+<dd><div style="text-align:center;">饭否页面示例</div></dd>
+
+
+<dt id="change">更新日志</dt>
+<dd> 2007-07-25 第一个版本0.1 Beta版发布，支持最简单的分享功能。</dd>
+<dd> 2007-07-26 0.2 Beta版发布。支持分享时添加附注信息，修改在GTalk上链接出错的Bug，其它一些小的改进。</dd>
+<dd> 2007-07-27 0.3 Beta版发布。解决豆瓣页面更新引起的无法工作的问题。</dd>
+<dd> 2007-07-29 0.4 Beta版发布。增加了对豆瓣语录的支持，支持自动检查更新的功能。</dd>
+<dd> 2007-12-02 1.0版发布。针对豆瓣的改版进行了相应的更新，支持豆瓣中输入的附注，发布前检查附注的长度。</dd>
+<dd> 2008-01-15 1.1版发布。针对豆瓣新的改版进行了相应的更新。</dd>
+<dd> 2008-01-20 1.2版发布。针对豆瓣新的改版进行了相应的更新。支持“同城”功能。</dd>
+<dd> 2009-01-06 1.3版发布。修复部分豆瓣页面更新带来的功能失效。发布支持Firefox 3.x的XPI版本。</dd>
+<dd> 2009-06-01 1.4版发布。修复部分豆瓣页面更新带来的功能失效。支持“线上活动”功能。</dd>
+<dd> 2010-12-08 2.0版发布。修复部分豆瓣页面更新带来的功能失效。</dd>
+<dd> 2010-12-17 2.1版发布。修复部分豆瓣页面更新带来的功能失效。</dd>
+
+<dt id="dev">开发人员</dt>
+<dd>豆饭已经在Google Code上建立了项目，有兴趣的朋友可以一起加入开发工作，让这个豆饭的功能越来越完善。</dd>
+<dd>Google Code上本项目的位置：<a href="http://code.google.com/p/douban-fanfou/">http://code.google.com/p/douban-fanfou/</a></dd>
+<dd>可以通过SVN获取最新代码：svn checkout http://douban-fanfou.googlecode.com/svn/trunk/ douban-fanfou</dd>
+<dd>或者直接通过SVN Web获取最新的脚本：<a href="http://douban-fanfou.googlecode.com/svn/trunk/doubanfanfouplugin.user.js">http://douban-fanfou.googlecode.com/svn/trunk/doubanfanfouplugin.user.js</a></dd>
+<dt id="contact">联系作者</dt>
+<dd>目前豆饭还只是一个非常初级的版本，期待您的建议和意见，我会根据大家的反馈来改进豆饭。</dd>
+<dd>我在饭否上的名字是：<a href="http://fanfou.com/lifanxi">Fanxi</a>，欢迎通过饭否与我联系。</dd>
+<dd>不过饭否不是聊天工具，所以更欢迎通过Google Talk: lifanxi@gmail.com或Live Messenger: lifanxi@hotmail.com与我一同探讨。</dd>
+<dd>也可以发邮件到lifanxi &lt;AT&gt; freemindworld.com</dd>
+<dd>您的支持是我继续努力改进的动力！</dd>
+
+<dt id="license">版权声明</dt>
+<dd>豆饭使用自由软件GPLv3协议，您可以自由的使用、修改和分发豆饭，但您必须始终保证所有的用户与您享有同等的权利。协议文本请见<a href="http://www.gnu.org/licenses/gpl.txt">http://www.gnu.org/licenses/gpl.txt</a></dd>
+<dd>如果您改进了豆饭，希望您能把修改后的版本提供给我，我希望能从中学习到更多的东西，谢谢！</dd>
+</dl>
+			</div>
+		</div>
+	</div>
+	<div id="footer">
+		<p>(C) Copyright 2007-2010 <a href="http://www.freemindworld.com">Li Fanxi</a> <a href="http://www.miibeian.gov.cn/" target="_blank" id="miibeian">苏ICP备07009277号</a><img src="counter.asp" boder="0" width="0" height="0" /></p>
+	</div>
+</div>
+<script type="application/x-javascript">
+<!--
+//	alert("豆饭生不逢时，豆瓣界面更新，导致豆饭无法正常工作，紧急更新中，敬请期待……");
+function install (aEvent)
+{
+  var params = {
+    "Doufan (Douban-Fanfou plugin)": { URL: aEvent.target.href,
+             IconURL: aEvent.target.getAttribute("iconURL"),
+             Hash: aEvent.target.getAttribute("hash"),
+             toString: function () { return this.URL; }
+    }
+  };
+  InstallTrigger.install(params);
+
+  return false;
+}
+-->
+</script>
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2318461-1";
+urchinTracker();
+</script>
+
+</body></html>
