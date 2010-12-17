@@ -419,7 +419,7 @@ function ChkEnv()
 
 function DoUpdate()
 {
-    var currentRevision = 11;
+    var currentRevision = 12;
     GM_xmlhttpRequest(
         {
             method: 'GET',
