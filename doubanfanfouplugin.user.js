@@ -34,6 +34,7 @@
 // @include http://www.douban.com/
 // @include http://www.douban.com/?*
 // @include http://*.douban.com/subject/*
+// @include http://*.douban.com/review/*
 // @include http://www.douban.com/*/miniblogs*
 // @include http://www.douban.com/contacts/*
 // @include http://www.douban.com/event/*/*
@@ -42,6 +43,7 @@
 // ==/UserScript==
 
 var pluginCount = 1;
+var singleMiniblogButton = false;
 var pluginNames = [ "饭否", "Twitter" ];
 var pluginIDs = [ 'doufan-ff-share' , 'doufan-twitter-share' ];
 
@@ -80,7 +82,8 @@ if (ChkEnv())
         // Event
         DoEvent();
     }
-    else if (pageUrl.indexOf("/subject/") != -1)
+    else if ((pageUrl.indexOf("/subject/") != -1) ||
+             (pageUrl.indexOf("/review/") != -1))
     {
         // Resource pages (Books, Movies, Musics)
         // Set DOM change trigger
@@ -169,30 +172,46 @@ function DoContactMiniblog()
         {
             if (alldivs[i].className == 'btn')
             {
-                for (type = 0; type < pluginCount; ++type)
+                if (singleMiniblogButton == true)
                 {
                     var span = document.createElement("span");
-
                     var btn = document.createElement("input");
-                    btn.type = "image";
-                    btn.src = "http://avatar2.fanfou.com/s0/00/37/9g.jpg?1181650871";
-                    btn.value = pluginNames[type];
-                    btn.name = pluginIDs[type];
-                    btn.id = pluginIDs[type];
-                    btn.style.height = "22px"
-                    btn.style.width = "22px"
+                    btn.type = "button"
+                    btn.value = "发微博";
+                    btn.name = "syncMiniblog";
+                    btn.id = "syncMiniblog";
                     btn.addEventListener("click", PostMiniblogFF, false);
 
                     span.appendChild(btn);
                     alldivs[i].appendChild(span);
-
-                    for (var j = 0; j < alldivs[i].childNodes.length; ++j)
-                    {
-                        if (alldivs[i].childNodes[j].className == 'bn-flat')
-                            alldivs[i].childNodes[j].childNodes[0].style.height = '22px';
-                    }
-                    break;
                 }
+                else
+                {
+                    for (type = 0; type < pluginCount; ++type)
+                    {
+                        var span = document.createElement("span");
+                        var btn = document.createElement("input");
+                        var pluginIMGs = [ 'http://avatar2.fanfou.com/s0/00/37/9g.jpg?1181650871' , 
+                                           'http://www.freemindworld.com/db_ff/tb.png' ];
+                        btn.type = "image";
+                        btn.src = pluginIMGs[type];
+                        btn.value = pluginNames[type];
+                        btn.name = pluginIDs[type];
+                        btn.id = pluginIDs[type];
+                        btn.style.height = "22px"
+                        btn.style.width = "22px"
+                        btn.addEventListener("click", PostMiniblogFF, false);
+
+                        span.appendChild(btn);
+                        alldivs[i].appendChild(span);
+                    }
+                }
+                for (var j = 0; j < alldivs[i].childNodes.length; ++j)
+                {
+                    if (alldivs[i].childNodes[j].className == 'bn-flat')
+                        alldivs[i].childNodes[j].childNodes[0].style.height = '22px';
+                }
+                break;
             }
             else if (alldivs[i].className == 'item')
             {
@@ -204,20 +223,29 @@ function DoContactMiniblog()
 
 function PostMiniblogFF(event)
 {
-    for (type = 0; type < pluginCount; ++type)
-        if (event.target.id == pluginIDs[type])
-            break;
+    if (singleMiniblogButton != true)
+        for (type = 0; type < pluginCount; ++type)
+            if (event.target.id == pluginIDs[type])
+                break;
     var data = event.target.form.elements[1].value;
     if (data != "")
     {
         var msg = "通过豆瓣广播：" + data;
         if (msg.length > 140)
         {
-            alert("发" + pluginNames[type] + "的广播不能超过133个字。");
+            if (singleMiniblogButton == true)
+                alert("同步到微博的广播不能超过133个字。");
+            else
+                alert("发" + pluginNames[type] + "的广播不能超过133个字。");
             return;
         }
-
-        SendRequest(msg, type);
+        if (singleMiniblogButton == true)
+        {
+            for (type = 0; type < pluginCount; ++type)
+                SendRequest(msg, type);
+        }
+        else
+            SendRequest(msg, type);
     }
     event.target.form.submit();
 }
@@ -316,6 +344,24 @@ function GetTitle()
 
 function GetMessage()
 {
+    var url = document.location.href;
+    if (url.indexOf("/review/") != -1)
+    {
+        var title = document.title;
+        if (url.indexOf("http://movie") == 0)
+        {
+            var t = title.replace(/^(.*)\((.*) 影评\)$/, "$2");
+            if (t == title)
+                title = title.replace(/^(.*)\((.*) 评论\)$/, "$2");
+            else
+                title =t;
+        }
+        else
+        {
+            title = title.replace(/^(.*)\(评论: (.*)\)$/, "$2");
+        }
+        return "豆瓣评论 - " + title;
+    }
     var status;
     status = document.getElementById("interest_sect_level");
     if (status)
