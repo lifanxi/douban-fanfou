@@ -1,5 +1,5 @@
 // Doufan (Douban-Fanou integration plugin)
-// Version 2.1
+// Version 2.2
 // Copyright (C) 2007-2010, Li Fanxi <lifanxi (AT) freemindworld.com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -145,11 +145,11 @@ function PostEvent(event)
             if (additional.length > (139-msg.length))
             {
                 alert("您输入的标注太长了，请将它减短" + (additional.length - (139-msg.length)) + "字。");
-				note = additional;
-				continue;
+                note = additional;
+                continue;
             }
         }
-		break;
+        break;
     }
     if (additional != "")
         msg += "。" + additional;
@@ -175,12 +175,12 @@ function DoContactMiniblog()
 
                     var btn = document.createElement("input");
                     btn.type = "image";
-					btn.src = "http://avatar2.fanfou.com/s0/00/37/9g.jpg?1181650871";
+                    btn.src = "http://avatar2.fanfou.com/s0/00/37/9g.jpg?1181650871";
                     btn.value = pluginNames[type];
                     btn.name = pluginIDs[type];
                     btn.id = pluginIDs[type];
-					btn.style.height = "22px"
-					btn.style.width = "22px"
+                    btn.style.height = "22px"
+                    btn.style.width = "22px"
                     btn.addEventListener("click", PostMiniblogFF, false);
 
                     span.appendChild(btn);
